@@ -2,9 +2,9 @@ const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'student',
-  password: 'student',
-  database: 'YOUR_DATABASE_NAME_HERE'
+  user: 'root',
+  password: '',
+  database: 'cowlist'
 });
 
 connection.connect((err) => {
@@ -15,13 +15,26 @@ connection.connect((err) => {
   }
 });
 
-module.exports = connection;
+const retrieveData = (callback) => {
+  connection.query('SELECT * FROM cows', (err, result) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, result);
+    }
+  })
+}
 
+const sendData = (data, callback) => {
+  connection.query(`INSERT INTO cows(name_, description_) VALUES ('${data.name}', '${data.description}')`, (err, result) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, result);
+    }
+  })
+}
 
-
-
-
-// Don't forget to export your functions!
-module.exports = {
-
-};
+module.exports.connection = connection;
+module.exports.retrieveData = retrieveData;
+module.exports.sendData = sendData;
